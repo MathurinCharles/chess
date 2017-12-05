@@ -6,6 +6,7 @@
 #include "piece.h"
 #include "move.h"
 #include "board.h"
+#include "movetree.h"
 
 // This class defines a game as seen by the 'main' module. It has the following
 // roles:
@@ -24,10 +25,12 @@ public:
     void displayCaptured();
 
     bool undo();
-
+//
+    void importLibrary(std::string filename);
+//
     std::vector<Move *> getAllLegalMoves();
 
-    Move *computerSuggestion(int strength);
+    Move *computerSuggestion(int strength, bool uselib);
 
     void play(Move *);
  
@@ -35,7 +38,10 @@ private:
 
     Board board_;
     std::stack<Move *> plays_;
-
+//
+    Tree openingLibrary;
+    bool haveOpeningLibrary;
+//
 };
 
 #endif // GAME_H_

@@ -1,6 +1,6 @@
 CXX=g++
-SOURCES=main.cpp concretepieces.cpp piece.cpp global.cpp move.cpp game.cpp board.cpp
-INCLUDES=concretepieces.h piece.h global.h move.h game.h board.h
+SOURCES=main.cpp concretepieces.cpp piece.cpp global.cpp move.cpp game.cpp board.cpp movetree.cpp
+INCLUDES=concretepieces.h piece.h global.h move.h game.h board.h movetree.h
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=main
 CFLAGS=-c -Wall -std=c++11

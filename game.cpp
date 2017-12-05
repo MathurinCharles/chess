@@ -10,7 +10,14 @@
 #include "concretepieces.h"
 #include "move.h"
 
-Game::Game() { }
+Game::Game() {
+    haveOpeningLibrary = false;
+ }
+
+void Game::importLibrary(std::string filename){
+    if(!(haveOpeningLibrary)) haveOpeningLibrary=true;
+    openingLibrary.readFile(filename);
+}
 
 void Game::play(Move *m) {
     assert(m != NULL);
@@ -50,9 +57,34 @@ std::vector<Move *> Game::getAllLegalMoves() {
 }
 
 
-Move *Game::computerSuggestion(int strength) {
+Move *Game::computerSuggestion(int strength,bool uselib) {
     srand(time(NULL));
-    std::vector<Move *> moves = board_.getAllLegalMoves();
+    std::vector<Move *> moves = board_.getAllLegalMoves(); 
+    if (uselib && haveOpeningLibrary){
+        if (plays_.empty()) {
+            std::vector<std::string> libMoves = openingLibrary.allMoves();
+            std::cout << libMoves.size() << std::endl;
+            int nm = rand()%libMoves.size();
+            for (auto x : moves) {
+                std::string s = x->toBasicNotation();
+                if(s == libMoves[nm]){
+                    return x;
+                }
+            }
+        } else {
+            Move *previousmove = plays_.top();
+            openingLibrary = *(openingLibrary.playMove(previousmove->toBasicNotation()));
+            std::vector<std::string> libMoves = openingLibrary.allMoves();
+            std::cout << libMoves.size() << std::endl;
+            int nm = rand()%libMoves.size();
+            for (auto x : moves) {
+                std::string s = x->toBasicNotation();
+                if(s == libMoves[nm]){
+                    return x;
+                }
+            }    
+        }
+    }
     if (moves.size() == 0) {
         return NULL;
     }

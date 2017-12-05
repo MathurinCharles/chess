@@ -46,7 +46,7 @@ void computerPlay(Game &g, int strength) {
        std::cout << "Nothing to play !" << std::endl;
        return; 
     }
-    Move *m = g.computerSuggestion(strength);
+    Move *m = g.computerSuggestion(strength,true);
     // should not be null as there is always something to play if the game is not
     // finished
     assert(m != NULL); 
@@ -106,6 +106,7 @@ void evaluateCommand(Game &g, const std::string &line) {
 
 int main() { 
     Game g;
+    g.importLibrary("lib1");
     std::string line;
     while(true) {
         std::cout << "> ";
