@@ -8,7 +8,8 @@
 
 class Tree {
     public:
-    
+
+    //Read the file "filename" and build the Tree
     void readFile(std::string filename);
 
     // add the opening given in `opening` vector starting from index i
@@ -20,7 +21,9 @@ class Tree {
 
     // return node/tree after playing move s
     // from current node/tree
-    Tree *playMove(const std::string &s); 
+    Tree *playMove(const std::string &s);
+
+    bool emptyTree();
 
 private:
     // a tree is a map from string (ie. move) to trees
