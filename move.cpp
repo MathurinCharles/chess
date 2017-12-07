@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cassert>
 
-BasicMove::BasicMove(Position from, Position to, Piece *moved) : from_(from), 
+BasicMove::BasicMove(Position from, Position to, Piece *moved) : from_(from),
                      to_(to), moved_(moved) {
    assert(moved);
 }
@@ -26,8 +26,15 @@ bool BasicMove::doesCapture(Piece*) const {
 }
 
 std::string BasicMove::toAlgebraicNotation(int i) const {
-     // FILL THIS
-     return "";
+    std::string notation = ""
+    Piece currentPiece = *(this.moved_);
+    notation += currentPiece.notation();
+    if (i==0) nonation += getFileRank(from_);
+    if (i==1) notation += getRank(from_);
+    if (i==2) notation += getFileLetter(from_);
+    if (doesCapture(NULL)) notation += "x";
+    notation += getFileRank(to_);
+    return notation;
 }
 
 std::string BasicMove::toBasicNotation() const {
@@ -38,7 +45,7 @@ bool BasicMoveWithCapture::doesCapture(Piece *p) const {
     return (p == NULL) || (p == captured_);
 }
 
-BasicMoveWithCapture::BasicMoveWithCapture(Position from, Position to, 
+BasicMoveWithCapture::BasicMoveWithCapture(Position from, Position to,
                                            Piece *moved, Piece *captured) :
    BasicMove(from, to, moved), captured_(captured) {
    assert(captured);
@@ -54,4 +61,3 @@ void BasicMoveWithCapture::unPerform(Board *b) const {
     b->setPiece(captured_->getPosition(), captured_);
     captured_->setCaptured(false);
 }
-
