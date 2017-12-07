@@ -59,27 +59,33 @@ std::vector<Move *> Game::getAllLegalMoves() {
 
 Move *Game::computerSuggestion(int strength,bool uselib) {
     srand(time(NULL));
-    std::vector<Move *> moves = board_.getAllLegalMoves(); 
-    if (uselib && haveOpeningLibrary){
+    std::vector<Move *> moves = board_.getAllLegalMoves();
+
+    if (haveOpeningLibrary && uselib && !(openingLibrary.emptyTree())){
+        std::vector<std::string> libMoves = openingLibrary.allMoves();
+        for (auto x:libMoves){
+            std::cout << x << std::endl;
+        }
+    }
+
+    if (haveOpeningLibrary && uselib && !(openingLibrary.emptyTree())){
         if (plays_.empty()) {
             std::vector<std::string> libMoves = openingLibrary.allMoves();
-            std::cout << libMoves.size() << std::endl;
             int nm = rand()%libMoves.size();
             for (auto x : moves) {
                 std::string s = x->toBasicNotation();
                 if(s == libMoves[nm]){
+                    openingLibrary = *(openingLibrary.playMove(x->toBasicNotation()));
                     return x;
                 }
             }
         } else {
-            Move *previousmove = plays_.top();
-            openingLibrary = *(openingLibrary.playMove(previousmove->toBasicNotation()));
             std::vector<std::string> libMoves = openingLibrary.allMoves();
-            std::cout << libMoves.size() << std::endl;
             int nm = rand()%libMoves.size();
             for (auto x : moves) {
                 std::string s = x->toBasicNotation();
                 if(s == libMoves[nm]){
+                    openingLibrary = *(openingLibrary.playMove(x->toBasicNotation()));
                     return x;
                 }
             }    
@@ -98,7 +104,6 @@ Move *Game::computerSuggestion(int strength,bool uselib) {
             play(moves[i]);
             values[i] = board_.heuristic();
             undo();
-            std::cout << values[i] << std::endl;
         }
         int nm = 0;
         if (board_.getPlayer() == WHITE){

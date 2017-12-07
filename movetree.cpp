@@ -54,6 +54,10 @@ Tree *Tree::playMove(const std::string &s) {
     return children_[s];
 }
 
+bool Tree::emptyTree(){
+    return (children_.empty());
+}
+
 
 
 
