@@ -103,7 +103,7 @@ void QueenCastling::perform(Board *b) const {
       b->removePiece({0,4});
       b->getPiece({0,0}, &R);
       b->setPiece({0,3}, R);
-      K->setPosition({0,3});
+      R->setPosition({0,3});
       b->removePiece({0,0});
     } else {
       Piece *K;
