@@ -10,7 +10,7 @@
 
 // This class defines a game as seen by the 'main' module. It has the following
 // roles:
-// 1. It is a wrapper to a Board object 
+// 1. It is a wrapper to a Board object
 // 2. It maintains the history of the game
 // 3. It implements a computer opponent
 
@@ -33,12 +33,14 @@ public:
     Move *computerSuggestion(int strength, bool uselib);
 
     void play(Move *);
- 
+
 private:
 
     Board board_;
     std::stack<Move *> plays_;
 //
+    std::stack<Tree > libPlays_;
+    unsigned int lenPlays_, lenLibPlays_ = 0;
     Tree openingLibrary;
     bool haveOpeningLibrary;
 //

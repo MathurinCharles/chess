@@ -73,14 +73,12 @@ Move *parseAndValidate(Game &g, const std::string &line) {
                 if (line == s) return x;
             }
         }
-        return NULL;
-    } else {
-        for (auto x : moves) {
-            std::string s = x->toBasicNotation();
-            if (line == s) return x;
-        }
-        return NULL;
     }
+    for (auto x : moves) {
+        std::string s = x->toBasicNotation();
+        if (line == s) return x;
+    }
+    return NULL;
 }
 
 // Transforms a string s into a vector of words (substrings not containing
@@ -122,7 +120,7 @@ void evaluateCommand(Game &g, const std::string &line) {
         } else if (command == "?") {
             std::vector<Move *> moves = g.getAllLegalMoves();
             for (auto x : moves) {
-                std::cout << x->toAlgebraicNotation(1) << " ";
+                std::cout << x->toBasicNotation() << " ";
             }
             std::cout << std::endl;
         } else if (command == "help" || command == "h") {
@@ -160,6 +158,7 @@ void evaluateCommand(Game &g, const std::string &line) {
 int main() {
     Game g;
     g.importLibrary("lib1");
+    g.importLibrary("lib2");
     std::string line;
     while(true) {
         std::cout << "> ";
