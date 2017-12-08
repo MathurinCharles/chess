@@ -22,6 +22,23 @@ void Game::importLibrary(std::string filename){
 void Game::play(Move *m) {
     assert(m != NULL);
     plays_.push(m);
+    lenPlays_ += 1;
+    if (haveOpeningLibrary){
+        haveOpeningLibrary = false;
+        if (!openingLibrary.emptyTree()){
+            std::vector<std::string> libMoves = openingLibrary.allMoves();
+            for (auto x : libMoves) {
+                std::string s = m->toBasicNotation();
+                if(s == x){
+                    libPlays_.push(openingLibrary);
+                    lenLibPlays_ += 1;
+                    openingLibrary = *(openingLibrary.playMove(s));
+                    haveOpeningLibrary = true;
+                    continue;
+                }
+            }
+        }
+    }
     m->perform(&board_);
     board_.switch_player();
 }
@@ -35,6 +52,14 @@ bool Game::undo() {
     m = plays_.top();
     m->unPerform(&board_);
     plays_.pop();
+    lenPlays_ -= 1;
+    if (haveOpeningLibrary){
+        openingLibrary = libPlays_.top();
+        libPlays_.pop();
+        lenLibPlays_ -= 1;
+    } else if (lenPlays_ == lenLibPlays_){
+        haveOpeningLibrary = true;
+    }
     board_.switch_player();
     return true;
 }
@@ -64,7 +89,7 @@ Move *Game::computerSuggestion(int strength,bool uselib) {
     if (haveOpeningLibrary && uselib && !(openingLibrary.emptyTree())){
         std::vector<std::string> libMoves = openingLibrary.allMoves();
         for (auto x:libMoves){
-            std::cout << x << std::endl;
+            std::cout << "library moves___________________" << x << std::endl;
         }
     }
 
@@ -75,7 +100,6 @@ Move *Game::computerSuggestion(int strength,bool uselib) {
             for (auto x : moves) {
                 std::string s = x->toBasicNotation();
                 if(s == libMoves[nm]){
-                    openingLibrary = *(openingLibrary.playMove(x->toBasicNotation()));
                     return x;
                 }
             }
@@ -85,10 +109,9 @@ Move *Game::computerSuggestion(int strength,bool uselib) {
             for (auto x : moves) {
                 std::string s = x->toBasicNotation();
                 if(s == libMoves[nm]){
-                    openingLibrary = *(openingLibrary.playMove(x->toBasicNotation()));
                     return x;
                 }
-            }    
+            }
         }
     }
     if (moves.size() == 0) {
@@ -124,6 +147,6 @@ Move *Game::computerSuggestion(int strength,bool uselib) {
         }
         return moves[nm];
     }
-   
+
     return NULL;
 }
