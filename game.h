@@ -27,6 +27,8 @@ public:
     bool undo();
 //
     void importLibrary(std::string filename);
+
+    void importLibraryPgn(std::string filename);
 //
     std::vector<Move *> getAllLegalMoves();
 

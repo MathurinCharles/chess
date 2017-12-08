@@ -12,6 +12,8 @@ class Tree {
     //Read the file "filename" and build the Tree
     void readFile(std::string filename);
 
+    void readFilePgn(std::string filename);
+
     // add the opening given in `opening` vector starting from index i
     // ...exercise to the reader: use an iterator instead
     void addOpening(const std::vector<std::string> &opening, int i);

@@ -19,6 +19,11 @@ void Game::importLibrary(std::string filename){
     openingLibrary.readFile(filename);
 }
 
+void Game::importLibraryPgn(std::string filename){
+    if(!(haveOpeningLibrary)) haveOpeningLibrary=true;
+    openingLibrary.readFilePgn(filename);
+}
+
 void Game::play(Move *m) {
     assert(m != NULL);
     plays_.push(m);
@@ -102,6 +107,22 @@ Move *Game::computerSuggestion(int strength,bool uselib) {
                 if(s == libMoves[nm]){
                     return x;
                 }
+                std::string s0 = x->toAlgebraicNotation(0);
+                if(s0 == libMoves[nm]){
+                    return x;
+                }
+                std::string s1 = x->toAlgebraicNotation(1);
+                if(s1 == libMoves[nm]){
+                    return x;
+                }
+                std::string s2 = x->toAlgebraicNotation(2);
+                if(s2 == libMoves[nm]){
+                    return x;
+                }
+                std::string s3 = x->toAlgebraicNotation(3);
+                if(s3 == libMoves[nm]){
+                    return x;
+                }
             }
         } else {
             std::vector<std::string> libMoves = openingLibrary.allMoves();
@@ -109,6 +130,22 @@ Move *Game::computerSuggestion(int strength,bool uselib) {
             for (auto x : moves) {
                 std::string s = x->toBasicNotation();
                 if(s == libMoves[nm]){
+                    return x;
+                }
+                std::string s0 = x->toAlgebraicNotation(0);
+                if(s0 == libMoves[nm]){
+                    return x;
+                }
+                std::string s1 = x->toAlgebraicNotation(1);
+                if(s1 == libMoves[nm]){
+                    return x;
+                }
+                std::string s2 = x->toAlgebraicNotation(2);
+                if(s2 == libMoves[nm]){
+                    return x;
+                }
+                std::string s3 = x->toAlgebraicNotation(3);
+                if(s3 == libMoves[nm]){
                     return x;
                 }
             }

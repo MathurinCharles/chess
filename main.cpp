@@ -159,6 +159,8 @@ int main() {
     Game g;
     g.importLibrary("lib1");
     g.importLibrary("lib2");
+    g.importLibraryPgn("openingtest.pgn");
+    // g.importLibraryPgn("openings.pgn");
     std::string line;
     while(true) {
         std::cout << "> ";
