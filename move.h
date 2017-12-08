@@ -14,19 +14,19 @@ class Board;
 
 // There are different types of moves in the game of Chess. They can be
 // quite different. Basic moves, with or without capture.
-// But also castling, "en passant", and pawn promotion. 
+// But also castling, "en passant", and pawn promotion.
 // see https://en.wikipedia.org/wiki/Rules_of_chess#Movement
 // In this file, only BasicMove and BasicMoveWithCapture are defined.
-// 
+//
 // The virtual class Move defines what all moves have in common. Essentially,
-// they pertain to a player and can be performed on a board. We also need the 
-// ability to unperform (or undo a move). 
-// 
+// they pertain to a player and can be performed on a board. We also need the
+// ability to unperform (or undo a move).
+//
 // See in board.h an example that shows how Board, Piece and Move work together
 class Move {
 public:
-   
-    // Modify b by performing the move. The move object must have been computed 
+
+    // Modify b by performing the move. The move object must have been computed
     // on this instance of b.
     //
     // The attributes (position, capture state) of the pieces involved are updated
@@ -41,8 +41,8 @@ public:
     // return algebraic notation for this move
     // from more precise to less precise
     // Example for basicmove : King move from A1 to B2, without and with capture
-    // i = 0    Ka1b2,  Ka1xb2 
-    // i = 1    K1b2    K1xb2 
+    // i = 0    Ka1b2,  Ka1xb2
+    // i = 1    K1b2    K1xb2
     // i = 2    Kab2    Kaxb2
     // i = 3    Kb2     Kxb2
     virtual std::string toAlgebraicNotation(int i) const = 0;
@@ -57,6 +57,43 @@ protected:
     Color player_;
 };
 
+class KingCastling : public Move {
+
+public:
+  KingCastling(Color color);
+
+  std::string toAlgebraicNotation(int i) const;
+
+  std::string toBasicNotation() const;
+
+  void unPerform(Board *b) const;
+
+  void perform(Board *b) const;
+
+  bool doesCapture(Piece*) const;
+
+private:
+  Color color_;
+};
+
+class QueenCastling : public Move {
+
+public:
+  QueenCastling(Color color);
+
+  std::string toAlgebraicNotation(int i) const;
+
+  std::string toBasicNotation() const;
+
+  void unPerform(Board *b) const;
+
+  void perform(Board *b) const;
+
+  bool doesCapture(Piece*) const;
+
+private:
+  Color color_;
+};
 
 class BasicMove : public Move {
 
@@ -71,7 +108,7 @@ public:
 
   virtual void perform(Board *b) const;
 
-  virtual bool doesCapture(Piece*) const; 
+  virtual bool doesCapture(Piece*) const;
 
 private:
   Position from_;
@@ -83,6 +120,42 @@ class BasicMoveWithCapture : public BasicMove {
 
 public:
     BasicMoveWithCapture(Position from, Position to, Piece *moved, Piece *captured);
+
+    void unPerform(Board *b) const;
+
+    void perform(Board *b) const;
+
+    bool doesCapture(Piece *p) const;
+private:
+    Piece *captured_;
+};
+
+class BasicPromotion : public Move {
+
+public:
+  BasicPromotion(Position from, Position to, Piece *moved, Piece *npiece);
+
+  std::string toAlgebraicNotation(int i) const;
+
+  std::string toBasicNotation() const;
+
+  virtual void unPerform(Board *b) const;
+
+  virtual void perform(Board *b) const;
+
+  virtual bool doesCapture(Piece*) const;
+
+private:
+  Position from_;
+  Position to_;
+  Piece *moved_;
+  Piece *npiece_;
+};
+
+class BasicPromotionWithCapture : public BasicPromotion {
+
+public:
+    BasicPromotionWithCapture(Position from, Position to, Piece *moved, Piece *npiece, Piece *captured);
 
     void unPerform(Board *b) const;
 
