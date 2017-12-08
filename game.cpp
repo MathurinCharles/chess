@@ -12,6 +12,10 @@
 
 Game::Game() {
     haveOpeningLibrary = false;
+    WKingCastlingPossible = true;
+    WQueenCastlingPossible = true;
+    BKingCastlingPossible = true;
+    BQueenCastlingPossible = true;
  }
 
 void Game::importLibrary(std::string filename){
@@ -26,6 +30,24 @@ void Game::importLibraryPgn(std::string filename){
 
 void Game::play(Move *m) {
     assert(m != NULL);
+    if (WKingCastlingPossible || BKingCastlingPossible){
+      std::string s = m->toBasicNotation();
+      std::string a = "";
+      a.append(s,0,2);
+      if (a == "e1") WKingCastlingPossible = false;
+      if (a == "h1") WKingCastlingPossible = false;
+      if (a == "e8") BKingCastlingPossible = false;
+      if (a == "e8") BKingCastlingPossible = false;
+    }
+    if (WQueenCastlingPossible || BQueenCastlingPossible){
+      std::string s = m->toBasicNotation();
+      std::string a = "";
+      a.append(s,0,2);
+      if (a == "e1") WQueenCastlingPossible = false;
+      if (a == "a1") WQueenCastlingPossible = false;
+      if (a == "e8") BQueenCastlingPossible = false;
+      if (a == "a8") BQueenCastlingPossible = false;
+    }
     plays_.push(m);
     lenPlays_ += 1;
     if (haveOpeningLibrary){
@@ -83,6 +105,10 @@ void Game::displayCaptured() {
 }
 
 std::vector<Move *> Game::getAllLegalMoves() {
+    board_.wkcpossible(WKingCastlingPossible);
+    board_.wqcpossible(WQueenCastlingPossible);
+    board_.bkcpossible(BKingCastlingPossible);
+    board_.bqcpossible(BQueenCastlingPossible);
     return board_.getAllLegalMoves();
 }
 

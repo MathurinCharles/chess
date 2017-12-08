@@ -7,6 +7,19 @@
 #include <cassert>
 #include <cstring>
 
+void Board::wkcpossible(bool b){
+  wkingCastlingPossible = b;
+}
+void Board::wqcpossible(bool b){
+  wqueenCastlingPossible = b;
+}
+void Board::bkcpossible(bool b){
+  bkingCastlingPossible = b;
+}
+void Board::bqcpossible(bool b){
+  bqueenCastlingPossible = b;
+}
+
 int Board::heuristic() const {
     int score = 0;
     for (int i = 0 ; i < 16;i++){
@@ -26,20 +39,20 @@ bool Board::isInside(int i, int j) const {
     return i >= 0 && i < 8 && j >= 0 && j < 8;
 }
 
-void Board::reachablePositionsAlongStraightLine(Position start, int di, int dj, 
+void Board::reachablePositionsAlongStraightLine(Position start, int di, int dj,
     int max, Color pl, bool canCapture, std::vector<Position> &res) const {
     int step = 0;
-    int si = start.first; 
+    int si = start.first;
     int sj = start.second;
-    while (true) { 
+    while (true) {
         step++;
         si += di;
         sj += dj;
-        if (!isInside(si, sj) || 
+        if (!isInside(si, sj) ||
             step > max) {
             break;
-        } 
-        if (board_[si][sj] != NULL && 
+        }
+        if (board_[si][sj] != NULL &&
             (board_[si][sj]->getColor() == pl || !canCapture)) {
             break;
         }
@@ -50,9 +63,9 @@ void Board::reachablePositionsAlongStraightLine(Position start, int di, int dj,
     }
 }
 
-void Board::filter(Position start, const std::vector<Position> &rel, Color pl, 
+void Board::filter(Position start, const std::vector<Position> &rel, Color pl,
     bool onlyIfCapture, std::vector<Position> &res) const {
-    int si = start.first; 
+    int si = start.first;
     int sj = start.second;
     for (auto d : rel) {
         int nsi = si + d.first;
@@ -74,8 +87,8 @@ void Board::filter(Position start, const std::vector<Position> &rel, Color pl,
 Board::Board() {
     memset(board_, (int) NULL, 64 * sizeof(Piece *));
     for (int i = 0; i < 8; i++) {
-        board_[6][i] = addPiece(new Pawn({6,i}, BLACK)); 
-        board_[1][i] = addPiece(new Pawn({1,i}, WHITE)); 
+        board_[6][i] = addPiece(new Pawn({6,i}, BLACK));
+        board_[1][i] = addPiece(new Pawn({1,i}, WHITE));
     }
 
     board_[7][0] = addPiece(new Rook({7,0}, BLACK));
@@ -102,7 +115,7 @@ Piece * Board::addPiece(Piece *p) {
   return p;
 }
 
-Color Board::getPlayer() const { 
+Color Board::getPlayer() const {
     return current_player_;
 }
 
@@ -162,6 +175,15 @@ std::vector<Move *> Board::getAllMoves(Color player) const {
             }
             p->getMoves(*this, moves);
         }
+        Move *KC = new KingCastling(player);
+        Move *QC = new QueenCastling(player);
+        if (player== WHITE) {
+          if (wkingCastlingPossible) moves.push_back(KC);
+          if (wqueenCastlingPossible) moves.push_back(QC);
+        } else {
+          if (bkingCastlingPossible) moves.push_back(KC);
+          if (bqueenCastlingPossible) moves.push_back(QC);
+        }
         return moves;
 }
 
@@ -182,6 +204,76 @@ std::vector<Move *> Board::getAllLegalMoves() {
 
 bool Board::isLegal(Move *m) {
     bool res = false;
+    if (m->toBasicNotation() == "0-0"){
+      Piece *P1;
+      Piece *P2;
+      int a = current_player_ ? 0:1;
+      if (!(isInCheck(current_player_)) && !(getPiece({a*7,5},&P1)) && !(getPiece({a*7,6},&P2)) && P1==NULL && P2==NULL){
+        setPiece({a*7,5},king_[current_player_]);
+        king_[current_player_]->setPosition({a*7,5});
+        removePiece({a*7,4});
+        if (isInCheck(current_player_)) {
+          setPiece({a*7,4},king_[current_player_]);
+          king_[current_player_]->setPosition({a*7,4});
+          removePiece({a*7,5});
+          return false;
+        }
+        setPiece({a*7,6},king_[current_player_]);
+        king_[current_player_]->setPosition({a*7,6});
+        removePiece({a*7,5});
+        if (isInCheck(current_player_)) {
+          setPiece({a*7,4},king_[current_player_]);
+          king_[current_player_]->setPosition({a*7,4});
+          removePiece({a*7,6});
+          return false;
+        }
+        setPiece({a*7,4},king_[current_player_]);
+        king_[current_player_]->setPosition({a*7,4});
+        removePiece({a*7,6});
+        return true;
+      }
+      return false;
+    }
+    if (m->toBasicNotation() == "0-0-0"){
+      Piece *P1;
+      Piece *P2;
+      Piece *P3;
+      int a = current_player_ ? 0:1;
+      if (!(isInCheck(current_player_)) && !(getPiece({a*7,1},&P1)) && !(getPiece({a*7,2},&P2)) && !(getPiece({a*7,3},&P3)) && P1==NULL && P2==NULL && P3==NULL){
+        setPiece({a*7,3},king_[current_player_]);
+        king_[current_player_]->setPosition({a*7,3});
+        removePiece({a*7,4});
+        if (isInCheck(current_player_)) {
+          setPiece({a*7,4},king_[current_player_]);
+          king_[current_player_]->setPosition({a*7,4});
+          removePiece({a*7,3});
+          return false;
+        }
+        setPiece({a*7,2},king_[current_player_]);
+        king_[current_player_]->setPosition({a*7,2});
+        removePiece({a*7,3});
+        if (isInCheck(current_player_)) {
+          setPiece({a*7,4},king_[current_player_]);
+          king_[current_player_]->setPosition({a*7,4});
+          removePiece({a*7,2});
+          return false;
+        }
+        setPiece({a*7,1},king_[current_player_]);
+        king_[current_player_]->setPosition({a*7,1});
+        removePiece({a*7,2});
+        if (isInCheck(current_player_)) {
+          setPiece({a*7,4},king_[current_player_]);
+          king_[current_player_]->setPosition({a*7,4});
+          removePiece({a*7,1});
+          return false;
+        }
+        setPiece({a*7,4},king_[current_player_]);
+        king_[current_player_]->setPosition({a*7,4});
+        removePiece({a*7,1});
+        return true;
+      }
+      return false;
+    }
     m->perform(this);
     res = !isInCheck(current_player_);
     m->unPerform(this);
@@ -209,8 +301,7 @@ bool Board::isInCheck(Color p) const {
     for (auto m : moves) {
         if (m->doesCapture(k)) {
             return true;
-        }  
+        }
     }
     return false;
 }
-

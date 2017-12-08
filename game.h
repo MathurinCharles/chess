@@ -45,6 +45,10 @@ private:
     unsigned int lenPlays_, lenLibPlays_ = 0;
     Tree openingLibrary;
     bool haveOpeningLibrary;
+    bool WKingCastlingPossible;
+    bool WQueenCastlingPossible;
+    bool BKingCastlingPossible;
+    bool BQueenCastlingPossible;
 //
 };
 

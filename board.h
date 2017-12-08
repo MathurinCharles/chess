@@ -18,19 +18,19 @@ class Move;
 // This class is tightly coupled with classed Piece and Move.
 // The follow example shows how these classes work together
 //
-// Board b;  
-// Piece *p; 
+// Board b;
+// Piece *p;
 // b.getPiece({1,1}, &p);      // p contains now the pawn at position {1,1} (i.e. B2)
-// std::vector<Move *> moves;  
+// std::vector<Move *> moves;
 // p->getMoves(b, moves);     // fill moves with all possible moves for this piece
-// Move *m = moves[0];     
+// Move *m = moves[0];
 // m->perform(&b);            // move m is performed on board b
 // b.display();
-// m->unPerform(&b);          // move m is "unperformed" on board b 
-// b.display();    
+// m->unPerform(&b);          // move m is "unperformed" on board b
+// b.display();
 //
 // The moves computed by getMoves only work on board used to compute them
-// 
+//
 
 class Board {
 public:
@@ -38,19 +38,19 @@ public:
     // according to the rules of the game.
     Board();
 
-    // returns all the moves that can be performed in the current state 
-    // of the game, this include some 'illegal' moves that would put the player 
+    // returns all the moves that can be performed in the current state
+    // of the game, this include some 'illegal' moves that would put the player
     // in check
-    std::vector<Move *> getAllMoves() const; 
+    std::vector<Move *> getAllMoves() const;
 
-    // returns all the legal moves that can be performed in the current 
+    // returns all the legal moves that can be performed in the current
     // state of the game.
-    std::vector<Move *> getAllLegalMoves(); 
+    std::vector<Move *> getAllLegalMoves();
 
     // A move is legal if after performing it, the current player is not in
     // check. Note: This method leaves the board as it found it, but can't
     // be labeled const because it has to temporarly modify it.
-    bool isLegal(Move *); 
+    bool isLegal(Move *);
 
     Color getPlayer() const;
 
@@ -67,13 +67,13 @@ public:
 
     void displayCaptured();
 
-    // returns a "score" that estimates how favorable the game is for a given 
+    // returns a "score" that estimates how favorable the game is for a given
     // player. A stricly positive score means that White is winning.
     // heuristic() == INF <=> Black is checkmate
     // heuristic() == MINF <=> White is checkmate
     // A simple way to compute this heuristic is to count the pieces captured
     // by each player. Other ingredients can be added, such as the control of
-    // the central positions 
+    // the central positions
     int heuristic() const;
 
     void switch_player();
@@ -81,17 +81,17 @@ public:
     // this is a utility function that returns the positions that can be reached
     // by a piece traveling in a straight line.
     // start is the starting position of the piece
-    // di, dj is the direction of the line to consider (e.g for a rook, the 
+    // di, dj is the direction of the line to consider (e.g for a rook, the
     // directions are di, dj = 1, 0; 0, 1, -1, 0  0, -1)
-    // max is the maximal number of steps to consider (e.g. 8 for a rook, 1 for 
+    // max is the maximal number of steps to consider (e.g. 8 for a rook, 1 for
     // the king)
     // pl is the player
-    // canCapture = true if the piece can capture that the pieces (of opposite color) 
+    // canCapture = true if the piece can capture that the pieces (of opposite color)
     // it encounters. It is true for most of pieces but not all.
-    // res is the vector that will store the result. All positions will be 
+    // res is the vector that will store the result. All positions will be
     // push_back'ed on res.
     // This function don't return positions that would fall outside of the board
-    void reachablePositionsAlongStraightLine(Position start, int di, int dj, 
+    void reachablePositionsAlongStraightLine(Position start, int di, int dj,
        int max_steps, Color pl, bool canCapture, std::vector<Position> &res) const;
 
     // this is a utility function that returns the positions that can be reached
@@ -99,13 +99,18 @@ public:
     // rel. For instance, for a knight rel = {{2,1}, {-2,1}, {-1,-2} ....}.
     // start is the starting position of the piece
     // pl is the player
-    // onlyIfCapture = true if the piece has to capture a piece (of opposite color) 
+    // onlyIfCapture = true if the piece has to capture a piece (of opposite color)
     // in order to move to the position (normally false except for pawns moving in diagonal).
-    // res is the vector that will store the result. All positions will be 
+    // res is the vector that will store the result. All positions will be
     // push_back'ed on res.
     // This function don't return positions that would fall outside of the board
-    void filter(Position start, const std::vector<Position> &rel, Color pl, 
+    void filter(Position start, const std::vector<Position> &rel, Color pl,
                 bool onlyIfCapture, std::vector<Position> &res) const;
+
+    void wkcpossible(bool b);
+    void wqcpossible(bool b);
+    void bkcpossible(bool b);
+    void bqcpossible(bool b);
 
 
 private:
@@ -117,6 +122,10 @@ private:
    Piece *king_[2];
    std::vector<Piece *> pieces_[2];
    Color current_player_ = WHITE;
+   bool wkingCastlingPossible = true;
+   bool wqueenCastlingPossible = true;
+   bool bkingCastlingPossible = true;
+   bool bqueenCastlingPossible = true;
 };
 
 #endif // BOARD_H_

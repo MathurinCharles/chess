@@ -156,6 +156,7 @@ void evaluateCommand(Game &g, const std::string &line) {
     }
 
 int main() {
+    std::cout << "Bonjour" << std::endl;
     Game g;
     g.importLibrary("lib1");
     g.importLibrary("lib2");
