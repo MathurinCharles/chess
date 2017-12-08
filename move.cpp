@@ -26,10 +26,10 @@ bool BasicMove::doesCapture(Piece*) const {
 }
 
 std::string BasicMove::toAlgebraicNotation(int i) const {
-    std::string notation = ""
-    Piece currentPiece = *(this.moved_);
-    notation += currentPiece.notation();
-    if (i==0) nonation += getFileRank(from_);
+    std::string notation = "";
+    Piece *currentPiece = this->moved_;
+    notation += currentPiece->notation();
+    if (i==0) notation += getFileRank(from_);
     if (i==1) notation += getRank(from_);
     if (i==2) notation += getFileLetter(from_);
     if (doesCapture(NULL)) notation += "x";
